@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="margin-left: 10%; margin-top: 3%; width:120%;">
+    <div>
+        <h4 class="my-3">Customer Details</h4>
+        <p><strong>Full Name:</strong> {{ customer.pName }}</p>
+        <p><strong>Address:</strong> {{ customer.pAddress }}</p>
+        <p><strong>Email:</strong> {{ customer.pEmail }}</p>
+        <p><strong>Phone:</strong> {{ customer.pPhone }}</p>
+    </div>
+
+    <h4 class="mt-5">Booking History</h4>
+    {% if booking %}
+    <div id="app">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Booking ID</th>
+                    <th>Movie Title</th>
+                    <th>Date & Time</th>
+                    <th>Seats Booked</th>
+                    <th>Order Total</th>
+                    <!-- Add more columns if needed -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for b in booking %}
+                <tr>
+                    <td>{{ b.bookingID }}</td>
+                    <td>{{ b.screeningDetail.movie_title }}</td>
+                    <td>{{ b.screeningDetail.screeningDate }} {{ b.screeningDetail.startTime }} - {{ b.screeningDetail.endTime }}</td>
+                    <td>{{ b.seats}}</td>
+                    <td>$ {{ b.orderTotal }}</td>
+                    <td>
+                        <button class="btn btn-warning" @click="showConfirm = true">Cancel Booking</button>
+                    
+                        <div v-if="showConfirm" class="modal-background">
+                            <div class="modal-confirm">
+                                Are you sure you want to cancel this booking?
+                                <form ref="cancelForm" action="{{ url_for('cancel_booking', booking_id=b.bookingID) }}" method="POST">
+                                    <button >Yes</button>
+                                </form>
+                                <button @click="showConfirm = false">No</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p>You have no bookings yet.</p>
+    {% endif %}
+
+    <h4 class="mt-5">Notifications</h4>
+    <table class="table" border="1">
+        <thead>
+            <tr>
+                <th>Notification Time</th>
+                <th>Content</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for note in notification %}
+            <tr>
+                <td>
+                    {{ note.createTime.strftime('%Y-%m-%d %H:%M:%S') }}
+                    {% if loop.first %}
+                        <span class="badge bg-primary" style="color: white;">NEW</span>
+                    {% endif %}
+                </td>
+                <td>{{ note.content }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script>
+    const { ref } = Vue;
+        const app = Vue.createApp({
+            setup() {
+                const showConfirm = ref(false);
+
+                const cancelBooking = () => {
+                    showConfirm.value = false;
+                    // Logic to actually cancel the booking goes here, e.g., submit the form.
+                }
+
+                return {
+                    showConfirm,
+                    cancelBooking
+                }
+            }
+        });
+
+        app.mount('#app');
+</script>
+{% endblock %}

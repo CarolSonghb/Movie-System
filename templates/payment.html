@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block content %}
+
+<form action="/create-payment" method="POST">
+    <input type="hidden" name="screening_id" value="{{ screening.screeningID }}">
+    <input type="hidden" name="seatSelected" value="{{ seatSelected }}">
+    <input type="hidden" name="movie_title" value="{{ movie.title }}">
+    <div id="payment" class="container mt-4" style="border: 1px solid #ccc; padding: 20px; border-radius: 10px; width: 30%;">
+        {% if session.get('user_role') == 'staff' %}
+        <h4 class="text-center">Booking for Customer...</h4>
+        {% else %}
+        <h4 class="text-center">Make a Payment for Your Booking...</h4>
+        {% endif %}
+        <div class="text-center">
+            {% if movie %}
+            <h5>{{ movie.title }}</h5>
+            {% if screening %}
+            <p><strong>Hall:</strong> Hall {{ screening_hall.name }}</p>
+            <p><strong>Date:</strong> {{ screening.screeningDate }}</p>
+            <p><strong>Time:</strong> {{ screening.startTime }} - {{ screening.endTime }}</p>
+            {% if seatSelected %}
+            <p><strong>Seats: </strong>{{ seatSelected }} </p>
+            {% if totalPrice %}
+            <p><strong>Total Price:</strong> $ {{ totalPrice }} </p>
+            {% endif %}
+            {% endif %}
+            {% endif %}
+            {% endif %}
+        </div>
+        {% if session.get('user_role') == 'staff' %}
+        <div class="mb-3">
+            <label for="customerName" class="form-label">Customer Name</label>
+            <input type="text" class="form-control" id="customerName" name="customerName" required>
+        </div>
+        {% endif %}
+        <div class="mb-3">
+            <label for="cardType" class="form-label">Payment Type</label>
+            <select class="form-control" id="cardType" name="cardType" v-model="cardType" @change="updatePaymentType" required>
+                <option value="" disabled selected>Select your payment type</option>
+                <option value="Cash">Cash</option>
+                <option value="Debit Card">Debit Card</option>
+                <option value="Credit Card">Credit Card</option>
+            </select>
+        </div>
+        <div v-if="showCardFields">
+            <div class="mb-3">
+                <label for="cardNumber" class="form-label">Card Number (16 digits)</label>
+                <input type="text" class="form-control" id="cardNumber" name="cardNumber" required>
+            </div>
+            <div class="mb-3">
+                <label for="bankName" class="form-label">Bank Name</label>
+                <input type="text" class="form-control" id="bankName" name="bankName" required>
+            </div>
+            <div class="mb-3">
+                <label for="expiryDate" class="form-label">Expiry Date</label>
+                <input type="date" class="form-control" id="expiryDate" name="expiryDate" required>
+            </div>
+            <div class="mb-3">
+                <label for="nameOnCard" class="form-label">Name on Card</label>
+                <input type="text" class="form-control" id="nameOnCard" name="nameOnCard" required>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="couponID" class="form-label">Coupon Code (optional)</label>
+            <div class="input-group">
+                <input type="text" class="form-control" v-model="couponInput" id="couponInput" name="couponInput" style="margin-right: 2%;">
+                <button class="btn btn-primary" type="button" @click="addCoupon">Add</button>
+            </div>
+            <div :style="{ color: messageColour }">[[ message ]]</div>
+            <div class="mb-3">
+                <label for="amount" class="form-label">Amount</label>
+                <input type="text" class="form-control" id="amount" name="amount" v-model="amount" readonly>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </div>
+</form>
+
+
+
+<script>
+    const { createApp, ref, onMounted, watch } = Vue
+
+        createApp({
+            delimiters: ['[[', ']]'],
+            setup() {
+                const couponList = ref([])
+                const couponInput = ref('')
+                const message = ref('')
+                const messageColour = ref('black')
+                {% if totalPrice %}
+                const amount = ref({{ totalPrice }});
+                {% endif %}
+                const cardType = ref('');
+                const showCardFields = ref(false);
+
+                onMounted(() => {
+                    fetch('/api/coupons')
+                        .then(response => {
+                            console.log(response);
+                            return response.json();
+                        })
+                        .then(data => {
+                            couponList.value = data;
+                        })
+                        .catch(error => {
+                            console.error('Error fetching coupons:', error);
+                        });
+                })
+
+
+                function updatePaymentType() {
+                    showCardFields.value = cardType.value === 'Debit Card' || cardType.value === 'Credit Card';
+                    console.log("Selected Payment Type:", cardType.value);
+                    console.log("Should display card info fields:", showCardFields.value);
+                }
+
+                function addCoupon() {
+                    console.log("Coupon List: ", couponList.value);
+                    console.log("Coupon Input: ", couponInput.value);
+                    const today = new Date().toISOString().split('T')[0];
+
+                    let validCoupon = couponList.value.find(coupon => coupon.couponID === couponInput.value);
+                    if (validCoupon) {
+                        if (validCoupon.expiryDate >= today) {
+                            message.value = 'Coupon added'
+                            messageColour.value = 'deepskyblue'
+                            amount.value -= validCoupon.discount;
+                            console.log("Updated Amount:", amount.value);
+                        } else {
+                            message.value = 'Coupon expired'
+                            messageColour.value = 'red'
+                        }
+                    } else {
+                        message.value = 'Coupon code does not exist '
+                        messageColour.value = 'red'
+                    }
+                }
+
+                return {
+                    message,
+                    messageColour,
+                    addCoupon,
+                    couponInput, 
+                    amount,
+                    cardType,
+                    showCardFields,
+                    updatePaymentType,
+                }
+            }
+        }).mount('#payment')
+</script>
+{% endblock %}

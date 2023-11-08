@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+    <h2 class="text-center my-3">Search Movies</h2>
+
+    <form action="/search-movie" method="GET">
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="criteria_title" style="color: grey;">Search by</label>
+                <select class="form-control" id="criteria" name="criteria">
+                    <option value="title">Title</option>
+                    <option value="language">Language</option>
+                    <option value="genre">Genre</option>
+                    <option value="releaseDate">Release Date</option>
+                    <option value="country">Country</option>
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="query" style="color: grey;">The movie you are looking for...</label>
+                <input type="text" class="form-control" id="query" name="query">
+            </div>
+            <div class="form-group col-md-4">
+                <button type="submit" class="btn btn-outline-primary"
+                    style="width: 200px; margin-left: 20%; margin-top: 9%;">Search</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="container">
+    {% if request.args.get('query') %}
+        <h2 class="text-center my-3">Search Results</h2>
+    {% elif 'browse-movie' in request.url %}
+        <h2 class="text-center my-3">Movies Now Showing</h2>
+    {% endif %}
+
+    <p style="color: darkblue;">Click movie card for more details and booking</p>
+    <div class="row">
+        {% for movie in cinema_movie %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <a href="{{ url_for('screening_list', movie_title=movie.title) }}" class="card-link">
+                        <h5 class="card-title">{{ movie.title }}</h5>
+                        <p class="card-text">Duration: {{ movie.durationMins }} minutes</p>
+                        <p class="card-text">Language: {{ movie.language }}</p>
+                        <p class="card-text">Release Date: {{ movie.releaseDate }}</p>
+                        <p class="card-text">Country: {{ movie.country }}</p>
+                        <p class="card-text">Genre: {{ movie.genre }}</p>
+                        <p class="card-text">
+                            {% set words = movie.description.split() %}
+                            {{ ' '.join(words[:15]) }}
+                            {% if words|length > 15 %}...{% endif %}
+                        </p>
+                    </a>
+                    <!-- Check if user role is admin -->
+                    {% if session['user_role'] == 'admin' %}
+                    <form action="/cancel-movie" method="POST">
+                        <input type="hidden" name="movie" value="{{ movie.title }}">
+                        <button type="button" class="btn btn-danger mt-3" data-toggle="modal" data-target="#cancelConfirmationModal">Cancel Movie</button>
+                        {% endif %}
+
+                        <div class="modal fade" id="cancelConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="cancelModalLabel">Cancel Movie</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to cancel this movie?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-danger">Confirm</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}

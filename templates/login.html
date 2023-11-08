@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <div class="text-center">
+                <div class="my-5">
+                    <a href="{{ url_for('browse_movie') }}" class="btn btn-primary">Browse Movies</a>
+                </div>
+                <div>
+                    {% if 'adminstaff-portal' in request.url %}
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#registerModal">New Customer Regitser</button>
+                    {% else %}
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#registerModal">Register Now</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% macro login_form(action, error_message=None) %}
+        <form class="mt-4" method="POST" action="{{ action }}">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username"
+                    required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password"
+                    required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Login</button>
+        </form>
+        {% endmacro %}
+        
+        <div class="col-md-4">
+            {% if 'adminstaff-portal' in request.url %}
+            <h2 class="text-center">Admin/Staff Login</h2>
+            {% if error_message %}
+            <div class="alert alert-danger">{{ error_message }}</div>
+            {% endif %}
+            {{ login_form("/login", error_message) }}
+            {% elif session['user_role'] == 'customer' %}
+            <h2 style="margin-top: 15%;">Hi, {{ session.get('user_fullname') }}</h2>
+            <h6 style="margin-top: 5%; margin-left: 15%;">Start your movie journey from here</h6>
+            {% else %}
+            <h2 class="text-center">Login to Book Tickets</h2>
+            {% if error_message %}
+            <div class="alert alert-danger">{{ error_message }}</div>
+            {% endif %}
+            {{ login_form("/login", error_message) }}
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+
+
+{% endblock %}

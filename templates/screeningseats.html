@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if selected_movie %}
+    <h1 class="m-5">{{ selected_movie.title }}</h1>
+
+    <div class="d-flex justify-content-between mx-5">
+        <p><strong>Duration:</strong> {{ selected_movie.durationMins }} minutes</p>
+        <p><strong>Language:</strong> {{ selected_movie.language }}</p>
+        <p><strong>Country:</strong> {{ selected_movie.country }}</p>
+        <p><strong>Genre:</strong> {{ selected_movie.genre }}</p>
+        <p><strong>Release Date:</strong> {{ selected_movie.releaseDate }}</p>
+    </div>
+    <p style="margin-left: 3%; margin-right: 3%; font-size: 22px; color: grey;">{{ selected_movie.description }}</p>
+
+    {% if screening %}
+    <h5 style="margin-left: 5%; margin-top: 2%;">Screening Details:</h5>
+    <div class="d-flex justify-content-between mx-5">
+        <p><strong>Hall:</strong> Hall {{ screening_hall.name }}</p>
+        <p><strong>Date:</strong> {{ screening.screeningDate }}</p>
+        <p><strong>Start Time: </strong> {{ screening.startTime }}</p>
+        <p><strong>End Time:</strong> {{ screening.endTime }}</p>
+        <p><strong>Price:</strong> $ {{ screening_hall.seatPrice }} </p>
+    </div>
+    <div id="seatmap">
+        <div class="d-flex justify-content-center">
+            <div class="d-flex flex-row">
+                <button class="sample-button p-2" style="background-color: red;"></button>
+                <p class="p-2">Taken</p>
+            </div>
+            <div class="d-flex flex-row">
+                <button class="sample-button p-2"></button>
+                <p class="p-2">Available</p>
+            </div>
+            <div class="d-flex flex-row">
+                <button class="sample-button p-2" style="background-color: black;"></button>
+                <p class="p-2">Selected</p>
+            </div>
+        </div>
+        <div class="table-container" >
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Rows</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for seat in screening_hall.listOfSeats %}
+                    {% if loop.first or seat.seatRow != screening_hall.listOfSeats[loop.index0-1].seatRow %}
+                    {% if not loop.first %}
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <td>{{ seat.seatRow }}</td>
+                        {% endif %}
+                        <td>
+                            <button class="seat" :class="{
+                                'selected-seat': isSelected({{ seat.seatNumber }}),
+                                'reserved-seat': {{ 'true' if seat.isReserved else 'false' }}     
+                            }" value="{{ seat.seatNumber }}" @click="selectSeat({{ seat.seatNumber }})" :disabled="{{ 'true' if seat.isReserved else 'false' }}">{{
+                                seat.seatNumber }}</button>
+                        </td>
+                        {% if loop.last or seat.seatRow != screening_hall.listOfSeats[loop.index0+1].seatRow %}
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div id="selectedSeats" style="margin-left: 20%;">
+            [[ selectedSeats.length || 'No' ]] [[ selectedSeats.length > 1 ? 'seats' : 'seat' ]] selected: 
+            
+            [[ selectedDetail.join(", ") ]]
+        </div>
+        <input type="submit" value="Confirm Seats" class="btn btn-success my-3" style="margin-left: 20%" @click="openModal">
+        <form method="POST" action="/payment">
+            <div id="confirmationModal" v-if="showModal" class="confirm-modal">
+                <div class="modal-content">
+                    <span class="close" @click="closeModal">&times;</span>
+                    <h2>Confirm Booking Details</h2>
+                    <h5>{{ selected_movie.title }}</h5>
+                    <div class="d-flex justify-content-between mx-5">
+                        <p><strong>Hall:</strong> Hall {{ screening_hall.name }}</p>
+                        <p><strong>Date:</strong> {{ screening.screeningDate }}</p>
+                        <p><strong>Start Time: </strong> {{ screening.startTime }}</p>
+                        <p><strong>End Time:</strong> {{ screening.endTime }}</p>
+                        <p><strong>Price:</strong> $ {{ screening_hall.seatPrice }} </p>
+                    </div>
+                    <p>Selected Seats: [[ selectedDetail.join(", ") ]]</p>
+                    <p>Total Price: $[[ getTotalPrice({{screening_hall.seatPrice}}) ]]</p>
+                    <input type="hidden" name="title" value="{{selected_movie.title}}">
+                    <input type="hidden" name="screeningid" value="{{screening.screeningID}}">
+                    <input type="hidden" name="seats" :value="selectedDetail.join(', ')">
+                    <input type="hidden" name="price":value="getTotalPrice({{screening_hall.seatPrice}})">
+                    <button type="submit" class="btn btn-success my-2">Pay Now</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {% endif %}
+{% endif %}
+
+<script>
+    const { createApp, ref, computed } = Vue
+
+    createApp({
+        delimiters: ['[[',']]'],
+        setup() {
+            const seats = ref([]);
+            {% for seat in screening_hall.listOfSeats %}
+            seats.value.push({
+                seat_number: {{ seat.seatNumber }},     
+                seat_row: "{{ seat.seatRow }}",          
+            });
+            {% endfor %}
+
+            const selectedSeats = ref([]);
+            const showModal = ref(false);
+
+            function selectSeat(seat) {
+                if (selectedSeats.value.includes(seat)) {
+                    selectedSeats.value.splice(selectedSeats.value.indexOf(seat), 1)
+                } else {
+                     selectedSeats.value.push(seat);
+                }
+            }
+            
+            function isSelected(seat) {
+                if (selectedSeats.value.includes(seat)) {
+                    return true;
+                } 
+                return false;
+            }
+
+            function openModal() {
+                showModal.value = true;
+            }
+
+            function closeModal() {
+                showModal.value = false
+            }
+
+            function getTotalPrice(seatPrice) {
+                return seatPrice * selectedSeats.value.length;
+            }
+
+            function getSeatRow(seat) {
+                return (seats.value.find(s => s.seat_number === seat).seat_row)
+            }
+
+            const selectedDetail = computed(() => {
+                const detail = [];
+                selectedSeats.value.forEach((seat) => {
+                    detail.push(`${getSeatRow(seat)}${seat}`)
+                })
+                return detail;
+            });
+
+            return {
+                isSelected,
+                selectSeat,
+                selectedSeats,
+                openModal,
+                showModal,
+                closeModal,
+                getTotalPrice,
+                seats,
+                getSeatRow,
+                selectedDetail,
+            }
+        }
+    }).mount('#seatmap')
+</script>
+
+{% endblock %}

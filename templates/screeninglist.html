@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if selected_movie %}
+    <h1 class="m-5">{{ selected_movie.title }}</h1>
+
+    <div class="d-flex justify-content-between mx-5">
+        <p><strong>Duration:</strong> {{ selected_movie.durationMins }} minutes</p>
+        <p><strong>Language:</strong> {{ selected_movie.language }}</p>
+        <p><strong>Country:</strong> {{ selected_movie.country }}</p>
+        <p><strong>Genre:</strong> {{ selected_movie.genre }}</p>
+        <p><strong>Release Date:</strong> {{ selected_movie.releaseDate }}</p>
+    </div>
+    <p style="margin-left: 3%; margin-right: 3%; font-size: 22px; color: grey;">{{ selected_movie.description }}</p>
+
+    <h5 class="m-5">Screening List (click to book)</h5>
+    <table class="table" style="width: 80%; margin: 0 auto;">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Start Time</th>
+                <th scope="col">End Time</th>
+                <th scope="col">Hall</th>
+                <th scope="col" style="width: 15%;">Book Tickets</th>
+                {% if session['user_role'] == 'admin' %}
+                <th scope="col" style="width: 15%;"></th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for screening in selected_movie.screeningList() %}
+            <tr>
+                <td>{{ screening.screeningDate }}</td>
+                <td>{{ screening.startTime }}</td>
+                <td>{{ screening.endTime }}</td>
+                <td>{{ screening.hall.name }}</td>
+                <td>
+                    <button
+                        onclick="window.location='{{ url_for('seats', screening_id=screening.screeningID, movie_title=selected_movie.title) }}';"
+                        class="btn btn-primary">Book
+                </td>
+                <td>
+                    {% if session['user_role'] == 'admin' %}
+                    <form action="/cancel-screening" method="POST">
+                        <input type="hidden" name="screeningID" value="{{ screening.screeningID }}">
+                        <input type="hidden" name="movie_title" value="{{ selected_movie.title }}">
+                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#cancelScreening{{ screening.screeningID }}">Cancel
+                            Screening</button>
+                    {% endif %}
+                        <div class="modal fade" id="cancelScreening{{ screening.screeningID }}" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel{{ screening.screeningID }}"
+                            aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="cancelModalLabel{{ screening.screeningID }}">Cancel Screening</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to cancel this screening?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-danger">Confirm</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endif %}
+
+{% endblock %}
+

@@ -1,0 +1,101 @@
+.card-text {
+    font-size: 14px;
+}
+
+.card-link {
+    color: black;
+}
+
+.table-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.table {
+  /* Optional: add some styles to your table for better visual appeal */
+  border-collapse: collapse;
+  width: 60%;
+  /* or whatever width you prefer */
+  border: 1px solid #ddd;
+}
+
+.seat-link {
+  display: inline-block;
+  padding: 5px 10px;
+  background-color: #f4f4f4;
+  border: 1px solid #ddd;
+  text-decoration: none;
+  color: #333;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.seat-link:hover {
+  background-color: #ddd;
+}
+
+.seat.selected-seat {
+  transition: all 0.3s;
+  background-color: black;
+  color: white;
+}
+
+.confirm-modal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  position: fixed;
+  width: 80%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border: 1px solid #000;
+}
+
+.close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.modal-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Semi-transparent black */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-confirm {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.reserved-seat {
+  background-color: red;
+  color:white;
+}
+
+.sample-button {
+  height: 30px;
+  width: 40px;
+}

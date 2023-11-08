@@ -1,0 +1,27 @@
+[
+    {
+        "couponID": "C1A2B3D4",
+        "expiryDate": "2023-01-31",
+        "discount": 10.00
+    },
+    {
+        "couponID": "E5F6G7H8",
+        "expiryDate": "2024-01-15",
+        "discount": 15.00
+    },
+    {
+        "couponID": "I9J0K1L2",
+        "expiryDate": "2023-11-30",
+        "discount": 5.00
+    },
+    {
+        "couponID": "M3N4O5P6",
+        "expiryDate": "2023-12-15",
+        "discount": 20.00
+    },
+    {
+        "couponID": "Q7R8S9T0",
+        "expiryDate": "2024-02-28",
+        "discount": 8.00
+    }
+]

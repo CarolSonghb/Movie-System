@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<h2 class="m-5">Admin Portal</h2>
+
+<!-- Button to Open the Modal -->
+<button type="button" class="btn btn-success" style="margin-left: 5%;"data-toggle="modal" data-target="#addMovieModal">Add new Movie</button>
+
+<!-- The Modal -->
+<div class="modal fade" id="addMovieModal">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Add New Movie</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body" style="max-height: 500px; overflow-y: auto;">
+                <form action="/add_movie" method="post">
+                    <div class="form-group">
+                        <label for="title">Title:</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="durationMins">Duration (minutes):</label>
+                        <input type="number" class="form-control" id="durationMins" name="durationMins" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="language">Language:</label>
+                        <input type="text" class="form-control" id="language" name="language" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="releaseDate">Release Date:</label>
+                        <input type="date" class="form-control" id="releaseDate" name="releaseDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="country">Country:</label>
+                        <input type="text" class="form-control" id="country" name="country" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="genre">Genre:</label>
+                        <input type="text" class="form-control" id="genre" name="genre" required>
+                    </div>
+                    <div class="form-group text-right">
+                        <button type="submit" class="btn btn-primary">Add Movie</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<button type="button" class="btn btn-primary" style="margin-left: 5%;" data-toggle="modal" data-target="#addScreeningModal">
+    Add New Screening
+</button>
+
+<!-- Add Screening Modal -->
+<div class="modal fade" id="addScreeningModal" tabindex="-1" role="dialog" aria-labelledby="addScreeningModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addScreeningModalLabel">Add New Screening</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="/add_screening" method="post">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="movieDropdown">Movie</label>
+                        <select class="form-control" id="movieDropdown" name="movie">
+                            <option value="" disabled selected>Select a Movie</option>
+                            {% for movie in movie %}
+                            <option value="{{movie.title}}">{{movie.title}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Screening Date -->
+                    <div class="form-group">
+                        <label for="screeningDate">Screening Date (a new screening can only be added from the next day)</label>
+                        <input type="date" class="form-control" id="screeningDate" name="screeningDate" required>
+                    </div>
+
+                    <!-- Start Time -->
+                    <div class="form-group">
+                        <label for="startTime">Start Time</label>
+                        <input type="time" class="form-control" id="startTime" name="startTime" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="hallDropdown">Cinema Hall</label>
+                        <select class="form-control" id="hallDropdown" name="hall">
+                            <option value="" disabled selected>Select a Hall</option>
+                            {% for hall in hall %}
+                            <option value="{{hall.name}}">Hall {{hall.name}} - {{hall.totalSeats}} seats</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add Screening</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<a href="{{ url_for('browse_movie') }}">
+    <button type="button" class="btn btn-secondary" style="margin-left: 5%;">Cancel Movie or Screening</button>
+</a>
+
+<script>
+    // Set the minimum allowed date to tomorrow
+    var today = new Date();
+    var tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    var dd = tomorrow.getDate();
+    var mm = tomorrow.getMonth() + 1; // January is 0!
+    var yyyy = tomorrow.getFullYear();
+    if (dd < 10) {
+        dd = '0' + dd;
+    }
+    if (mm < 10) {
+        mm = '0' + mm;
+    }
+    var minDate = yyyy + '-' + mm + '-' + dd;
+    document.getElementById('screeningDate').setAttribute('min', minDate);
+</script>
+
+{% endblock %}

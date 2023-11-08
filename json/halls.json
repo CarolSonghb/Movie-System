@@ -1,0 +1,32 @@
+{
+    "hall": [
+        {
+            "name": "1",
+            "seats": 120,
+            "seatType": "Regular",
+            "seatPrice": 20.0,
+            "columns": 10
+        },
+        {
+            "name": "2",
+            "seats": 90,
+            "seatType": "Regular",
+            "seatPrice": 20.0,
+            "columns": 10
+        },
+        {
+            "name": "3",
+            "seats": 110,
+            "seatType": "Regular",
+            "seatPrice": 20.0,
+            "columns": 10
+        },
+        {
+            "name": "4",
+            "seats": 80,
+            "seatType": "VIP",
+            "seatPrice": 35.0,
+            "columns": 10
+        }
+    ]
+}

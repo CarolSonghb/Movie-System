@@ -1,0 +1,56 @@
+[
+    {
+        "username": "alice_j",
+        "password": "beach123",
+        "role": "admin",
+        "fullname": "Alice Johnson",
+        "address": "123 Main St, Anytown, USA",
+        "email": "alice.johnson@email.com",
+        "phone": "555-1234"
+    },
+    {
+        "username": "bob_s",
+        "password": "explore99",
+        "role": "staff",
+        "fullname": "Bob Smith",
+        "address": "456 Elm St, Sometown, USA",
+        "email": "bob.smith@email.com",
+        "phone": "555-5678"
+    },
+    {
+        "username": "charlie_d",
+        "password": "mtns4567",
+        "role": "staff",
+        "fullname": "Charlie Davis",
+        "address": "789 Oak St, Othertown, USA",
+        "email": "charlie.davis@email.com",
+        "phone": "555-9101"
+    },
+    {
+        "username": "danielle_t",
+        "password": "river890",
+        "role": "customer",
+        "fullname": "Danielle Thompson",
+        "address": "123 Maple St, Anothertown, USA",
+        "email": "danielle.thompson@email.com",
+        "phone": "555-1122"
+    },
+    {
+        "username": "ethan_w",
+        "password": "forest001",
+        "role": "customer",
+        "fullname": "Ethan Wilson",
+        "address": "456 Pine St, Mytown, USA",
+        "email": "ethan.wilson@email.com",
+        "phone": "555-3344"
+    },
+    {
+        "username": "fiona_m",
+        "password": "ocean765",
+        "role": "customer",
+        "fullname": "Fiona Miller",
+        "address": "789 Cedar St, Yourtown, USA",
+        "email": "fiona.miller@email.com",
+        "phone": "555-5566"
+    }
+]

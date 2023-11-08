@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>{% block title %}Linicoln Movie{% endblock %}</title>
+    <!-- Bootstrap CSS link -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet"">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script> 
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/">Lincoln Movie</a>
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/browse-movie">Browse Movies</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/search-movie">Search Movies</a>
+            </li>
+            {% set role = session.get('user_role') %}
+            <li class="nav-item">
+                <a class="nav-link"
+                    href="{% if role == 'admin' %}/admin{% elif role == 'staff' %}/staff{% else %}/adminstaff-portal{% endif %}">
+                    Admin/Staff Portal</a>
+            </li>
+        </ul>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                {% if 'user_role' in session %}
+                {% set default_name = 'Guest' %}
+                {% set profile_url = '/' %} <!-- Default URL if none match -->
+        
+                {% if session['user_role'] == 'customer' %}
+                {% set default_name = 'Customer' %}
+                {% set profile_url = url_for('user_profile', username=session.get('user_id')) %}
+                {% elif session['user_role'] == 'admin' %}
+                {% set default_name = 'Admin' %}
+                {% elif session['user_role'] == 'staff' %}
+                {% set default_name = 'Staff' %}
+                {% endif %}
+        
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ profile_url }}">
+                        Hi, {{ session.get('user_fullname', default_name) }}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">Logout</a>
+                </li>
+        
+                {% else %}
+                <li class="nav-item">
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#registerModal">Register
+                        Now</button>
+                    <a class="btn btn-primary mx-4" href="/">Login</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    <!-- Registration Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="width: 40%;">
+                <div class="modal-header">
+                    {%if session['user_role'] == 'staff' %}
+                    <h5 class="modal-title" id="registerModalLabel">Register a new Customer</h5>
+                    {% else %}
+                    <h5 class="modal-title" id="registerModalLabel">Register</h5>
+                    {% endif %}
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Registration form -->
+                    <form method="POST" action="/register"> <!-- Specify the registration route -->
+                        <input type="hidden" name="user_role" value="{{ session['user_role']}}">
+                        <div class="form-group">
+                            <label for="registerUsername">Username</label>
+                            <input type="text" class="form-control" id="registerUsername" name="registerUsername"
+                                placeholder="Enter your username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPassword">Password</label>
+                            <input type="password" class="form-control" id="registerPassword" name="registerPassword"
+                                placeholder="Enter your password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerName">Full Name</label>
+                            <input type="text" class="form-control" id="registerName" name="registerName"
+                                placeholder="Enter your full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerAddress">Address</label>
+                            <input type="text" class="form-control" id="registerAddress" name="registerAddress"
+                                placeholder="Enter your address" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerEmail">Email</label>
+                            <input type="email" class="form-control" id="registerEmail" name="registerEmail"
+                                placeholder="Enter your email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPhone">Phone</label>
+                            <input type="text" class="form-control" id="registerPhone" name="registerPhone"
+                                placeholder="Enter your phone number" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Register</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <section class="content">
+        <header>
+            {% block header %}{% endblock %}
+        </header>
+        {% for category, message in get_flashed_messages(with_categories=True) %}
+            {% if category == 'success' %}
+            <div class="alert alert-success">{{ message }}</div>
+            {% elif category == 'error' %}
+            <div class="alert alert-danger">{{ message }}</div>
+            {% else %}
+            <div class="alert alert-info">{{ message }}</div>
+            {% endif %}
+            {% endfor %}
+        {% block content %}{% endblock %}
+    </section>
+    
+    <!-- Add Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            {% if 'Username already exists, please choose another one.' in get_flashed_messages() %}
+            $('#registerModal').modal('show');
+            {% endif %}
+        });
+    </script>
+    
+
+
+</body>
+
+</html>

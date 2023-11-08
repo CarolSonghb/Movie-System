@@ -1,0 +1,79 @@
+[
+    {
+        "title": "Avatar",
+        "description": "A paraplegic Marine dispatched to the moon Pandora on a unique mission becomes torn between following his orders and protecting the world he feels is his home",
+        "durationMins": 162,
+        "language": "English",
+        "releaseDate": "2009-12-18",
+        "country": "America",
+        "genre": "Science Fiction",
+        "screenings": [
+            {   
+                "screeningDate": "2023-10-31",
+                "startTime": "14:00:00",
+                "endTime": "17:02:00",
+                "hall": "1"
+            },
+            {
+                "screeningDate": "2023-11-01",
+                "startTime": "18:00:00",
+                "endTime": "21:02:00",
+                "hall": "2"
+            }
+        ]
+    },
+    {
+        "title": "Inception",
+        "description": "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.",
+        "durationMins": 148,
+        "language": "English",
+        "releaseDate": "2010-07-16",
+        "country": "America",
+        "genre": "Science Fiction",
+        "screenings": [
+            {
+                "screeningDate": "2023-11-01",
+                "startTime": "14:00:00",
+                "endTime": "16:28:00",
+                "hall": "3"
+            }
+        ]
+    },
+    {
+        "title": "The Matrix",
+        "description": "A computer programmer discovers that reality as he knows it is a simulation created by machines.",
+        "durationMins": 136,
+        "language": "English",
+        "releaseDate": "1999-03-31",
+        "country": "America",
+        "genre": "Science Fiction",
+        "screenings": [
+            {
+                "screeningDate": "2023-11-02",
+                "startTime": "20:00:00",
+                "endTime": "22:16:00",
+                "hall": "4"
+            }
+        ]
+    },
+    {
+        "title": "Pulp Fiction",
+        "description": "The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.",
+        "durationMins": 154,
+        "language": "English",
+        "releaseDate": "1994-10-14",
+        "country": "America",
+        "genre": "Crime",
+        "screenings": []
+    },
+    {
+        "title": "Forrest Gump",
+        "description": "The presidencies of Kennedy and Johnson, the events of Vietnam, Watergate, and other history unfold through the perspective of an Alabama man with an IQ of 75.",
+        "durationMins": 142,
+        "language": "English",
+        "releaseDate": "1994-07-06",
+        "country": "America",
+        "genre": "Drama",
+        "screenings": []
+    }
+]

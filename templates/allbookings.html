@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 class="m-5">Booking List</h2>
+<form action="/cancelbooking", method="POST">
+    <div class="d-flex justify-content-center">
+        {% if bookings %}
+        <table class="table" style="width: 90%;">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Booking ID</th>
+                    <th>Booking Time</th>
+                    <th>Customer</th>
+                    <th>Movie Title</th>
+                    <th>Screening Date</th>
+                    <th>Seats</th>
+                    <th>Order Total</th>
+                    <th>Payment Type</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking.bookingID }}</td>
+                    <td>{{ booking.createdOn.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    <td>{{ booking.customer.pName }}</td>
+                    <td>{{ booking.screeningDetail.movie_title }}</td>
+                    <td>{{ booking.screeningDetail.screeningDate }}</td>
+                    <td>
+                        {% for seat in booking.seats %}
+                        {{ seat }}
+                        {% endfor %}
+                    </td>
+                    <td>${{ booking.orderTotal }}</td>
+                    <td>{{ booking.paymentDetail.cardType }}</td>
+                    <td>
+                        <input type="hidden" name="bookingID" value="{{ booking.bookingID }}">
+                        <input type="hidden" name="customerName" value="{{ booking.customer.pName }}">
+                        <button type="submit" class="btn btn-secondary" data-toggle="modal" data-target="#cancelBooking">Cancel Booking</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <h4>No bookings made yet.</h4>
+        {% endif %}
+    </div>
+    <div class="modal fade" id="cancelBooking" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cancelModalLabel">Cancel Booking</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to cancel this booking?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-danger">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% endblock %}
