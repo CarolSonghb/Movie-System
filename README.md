@@ -3,7 +3,7 @@
 --------------------------------------------------------
 
 **This is a web app written using MVC and OOP approaches.**  
-**The programming languages used in the app are Python, Flask, HTML, CSS, Javascript, Bootstrap and Vue.js. Json fiels are used as intial mocking data.**
+**The programming languages used in the app are Python, Flask, HTML, CSS, Javascript, Bootstrap and Vue.js. Json files are used as intial mocking data.**
 
 *Three user roles with different functions (username and password can be found in the json files)*
 * Admin:
